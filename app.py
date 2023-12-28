@@ -105,5 +105,81 @@ def get_user_details(userid):
         }
         return jsonify(res)
 
+@app.route("/api/create/project/<userid>", methods=["POST"])
+def create_project(userid):
+    projectname = request.form.get("projectname")
+    with open(f"{APP_ROOT}/db/projectnames.json", "r") as json_file:
+        projectnames = json.load(json_file)
+        projectnames_backup = copy.deepcopy(projectnames)
+    if userid in projectnames.keys():
+        projectid = uuid7str()
+        projectnames[userid]["projectnames"].insert(0,{
+            "projectid": projectid,
+            "projectname": projectname
+        })
+        try:
+            with open(f"{APP_ROOT}/db/projectnames.json", "w") as json_file:
+                json.dump(projectnames, json_file, indent=2)
+            res = {
+                "status": "ok",
+                "message": "Project created!",
+                "projectid": projectid
+            }
+            return jsonify(res)
+        except Exception:
+            with open(f"{APP_ROOT}/db/projectnames.json", "w") as json_file:
+                json.dump(projectnames_backup, json_file, indent=2)
+            res = {
+                "status": "not-ok",
+                "message": "Project cannot be created!"
+            }
+            return jsonify(res)
+    else:
+        projectid = uuid7str()
+        projectnames.update({
+            userid: {
+                "projectnames": [
+                    {
+                        "projectid": projectid,
+                        "projectname": projectname
+                    }
+                ]
+            }
+        })
+        try:
+            with open(f"{APP_ROOT}/db/projectnames.json", "w") as json_file:
+                json.dump(projectnames, json_file, indent=2)
+            res = {
+                "status": "ok",
+                "message": "Project created!",
+                "projectid": projectid
+            }
+            return jsonify(res)
+        except Exception:
+            with open(f"{APP_ROOT}/db/projectnames.json", "w") as json_file:
+                json.dump(projectnames_backup, json_file, indent=2)
+            res = {
+                "status": "not-ok",
+                "message": "Project cannot be created!"
+            }
+            return jsonify(res)
+
+@app.route("/api/get/projects/<userid>", methods=["POST"])
+def get_projects(userid):
+    with open(f"{APP_ROOT}/db/projectnames.json", "r") as json_file:
+        projectnames = json.load(json_file)
+    if userid not in projectnames.keys():
+        res = {
+            "status": "not-ok",
+            "message": "Something went wrong!"
+        }
+        return jsonify(res)
+    else:
+        res = {
+            "status": "ok",
+            "projectnames": projectnames[userid]["projectnames"]
+        }
+        return jsonify(res)
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=9999, debug=True)
