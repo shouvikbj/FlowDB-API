@@ -105,21 +105,31 @@ def get_user_details(userid):
         }
         return jsonify(res)
 
-@app.route("/api/create/project/<userid>", methods=["POST"])
+@app.route("/api/create/projectnames/<userid>", methods=["POST"])
 def create_project(userid):
     projectname = request.form.get("projectname")
     with open(f"{APP_ROOT}/db/projectnames.json", "r") as json_file:
         projectnames = json.load(json_file)
         projectnames_backup = copy.deepcopy(projectnames)
+    with open(f"{APP_ROOT}/db/projects.json", "r") as json_file:
+        projects = json.load(json_file)
+        projects_backup = copy.deepcopy(projects)
     if userid in projectnames.keys():
         projectid = uuid7str()
         projectnames[userid]["projectnames"].insert(0,{
             "projectid": projectid,
             "projectname": projectname
         })
+        projects.update({
+            projectid: {
+                "datas": {}
+            }
+        })
         try:
             with open(f"{APP_ROOT}/db/projectnames.json", "w") as json_file:
                 json.dump(projectnames, json_file, indent=2)
+            with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+                json.dump(projects, json_file, indent=2)
             res = {
                 "status": "ok",
                 "message": "Project created!",
@@ -129,9 +139,11 @@ def create_project(userid):
         except Exception:
             with open(f"{APP_ROOT}/db/projectnames.json", "w") as json_file:
                 json.dump(projectnames_backup, json_file, indent=2)
+            with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+                json.dump(projects_backup, json_file, indent=2)
             res = {
                 "status": "not-ok",
-                "message": "Project cannot be created!"
+                "message": "Project could not be created!"
             }
             return jsonify(res)
     else:
@@ -146,9 +158,16 @@ def create_project(userid):
                 ]
             }
         })
+        projects.update({
+            projectid: {
+                "datas": {}
+            }
+        })
         try:
             with open(f"{APP_ROOT}/db/projectnames.json", "w") as json_file:
                 json.dump(projectnames, json_file, indent=2)
+            with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+                json.dump(projects, json_file, indent=2)
             res = {
                 "status": "ok",
                 "message": "Project created!",
@@ -158,14 +177,16 @@ def create_project(userid):
         except Exception:
             with open(f"{APP_ROOT}/db/projectnames.json", "w") as json_file:
                 json.dump(projectnames_backup, json_file, indent=2)
+            with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+                json.dump(projects_backup, json_file, indent=2)
             res = {
                 "status": "not-ok",
                 "message": "Project cannot be created!"
             }
             return jsonify(res)
 
-@app.route("/api/get/projects/<userid>", methods=["POST"])
-def get_projects(userid):
+@app.route("/api/get/projectnames/<userid>", methods=["POST"])
+def get_projectnames(userid):
     with open(f"{APP_ROOT}/db/projectnames.json", "r") as json_file:
         projectnames = json.load(json_file)
     if userid not in projectnames.keys():
@@ -178,6 +199,42 @@ def get_projects(userid):
         res = {
             "status": "ok",
             "projectnames": projectnames[userid]["projectnames"]
+        }
+        return jsonify(res)
+
+@app.route("/api/get/project/<userid>/<projectid>", methods=["POST"])
+def get_project(userid, projectid):
+    with open(f"{APP_ROOT}/db/projectnames.json", "r") as json_file:
+        projectnames = json.load(json_file)
+    with open(f"{APP_ROOT}/db/projects.json", "r") as json_file:
+        projects = json.load(json_file)
+    projectname = ""
+    projectdetails = []
+    if userid in projectnames.keys():
+        for project in projectnames[userid]["projectnames"]:
+            if project["projectid"] == projectid:
+                projectname = project["projectname"]
+                break
+    else:
+        res = {
+            "status": "not-ok",
+            "message": "Something went wrong!"
+        }
+        return jsonify(res)
+    if projectid in projects.keys():
+        datas = projects[projectid]["datas"]
+        for _, data in datas.items():
+            projectdetails.append(data)
+        res = {
+            "status": "ok",
+            "projectname": projectname,
+            "projectdetails": projectdetails
+        }
+        return jsonify(res)
+    else:
+        res = {
+            "status": "not-ok",
+            "message": "Project not found!"
         }
         return jsonify(res)
 

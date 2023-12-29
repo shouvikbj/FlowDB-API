@@ -2,36 +2,12 @@
   "0658ae2e-a733-78f7-8000-3aca42d20655": {
     "projectnames": [
       {
-        "projectid": "0658dd1f-9a0f-7cc5-8000-c9dd05d97b67",
-        "projectname": "Test project 6"
+        "projectid": "0658ea82-fb09-73d9-8000-f6b6276c24d9",
+        "projectname": "GP Project Board"
       },
       {
-        "projectid": "0658dd13-533c-706e-8000-1997166c04cd",
-        "projectname": "Test project 5"
-      },
-      {
-        "projectid": "0658dd0a-cf5a-70f0-8000-aab301e029b5",
-        "projectname": "Test project 4"
-      },
-      {
-        "projectid": "0658dccb-f532-7734-8000-510eaf8ccdbf",
-        "projectname": "Test project 1"
-      },
-      {
-        "projectid": "0658dccd-edc9-7470-8000-616be841709c",
-        "projectname": "Test project 2"
-      },
-      {
-        "projectid": "0658dd02-6165-7a9a-8000-2768534c7453",
-        "projectname": "Test project 3"
-      }
-    ]
-  },
-  "0658e634-5cc5-7a5f-8000-5efa9102ca9b": {
-    "projectnames": [
-      {
-        "projectid": "0658e63f-8d74-771f-8000-00ca38f22780",
-        "projectname": "Some project"
+        "projectid": "0658e9dd-cc74-74c3-8000-2d0632aaef44",
+        "projectname": "Note Taker"
       }
     ]
   }
