@@ -26,5 +26,13 @@
         "projectname": "Test project 3"
       }
     ]
+  },
+  "0658e634-5cc5-7a5f-8000-5efa9102ca9b": {
+    "projectnames": [
+      {
+        "projectid": "0658e63f-8d74-771f-8000-00ca38f22780",
+        "projectname": "Some project"
+      }
+    ]
   }
 }

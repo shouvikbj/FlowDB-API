@@ -171,7 +171,7 @@ def get_projects(userid):
     if userid not in projectnames.keys():
         res = {
             "status": "not-ok",
-            "message": "Something went wrong!"
+            "message": "No projects found!"
         }
         return jsonify(res)
     else:
