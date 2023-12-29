@@ -122,7 +122,7 @@ def create_project(userid):
         })
         projects.update({
             projectid: {
-                "datas": {}
+                "datas": []
             }
         })
         try:
@@ -160,7 +160,7 @@ def create_project(userid):
         })
         projects.update({
             projectid: {
-                "datas": {}
+                "datas": []
             }
         })
         try:
@@ -209,7 +209,7 @@ def get_project(userid, projectid):
     with open(f"{APP_ROOT}/db/projects.json", "r") as json_file:
         projects = json.load(json_file)
     projectname = ""
-    projectdetails = []
+    projectdetails = {}
     if userid in projectnames.keys():
         for project in projectnames[userid]["projectnames"]:
             if project["projectid"] == projectid:
@@ -222,9 +222,7 @@ def get_project(userid, projectid):
         }
         return jsonify(res)
     if projectid in projects.keys():
-        datas = projects[projectid]["datas"]
-        for _, data in datas.items():
-            projectdetails.append(data)
+        projectdetails = projects[projectid]
         res = {
             "status": "ok",
             "projectname": projectname,
@@ -235,6 +233,113 @@ def get_project(userid, projectid):
         res = {
             "status": "not-ok",
             "message": "Project not found!"
+        }
+        return jsonify(res)
+
+@app.route("/api/adddata/<category>/<projectid>", methods=["POST"])
+def add_data_to_project(category, projectid):
+    if request.method == "POST":
+        formdata = request.form
+        new_data = {
+            "id": uuid7str()
+        }
+        for key, value in formdata.to_dict().items():
+            new_data.update({key: value})
+        with open(f"{APP_ROOT}/db/projects.json", "r") as json_file:
+            projects = json.load(json_file)
+            projects_backup = copy.deepcopy(projects)
+        if projectid in projects.keys():
+            try:
+                if category in projects[projectid].keys():
+                    projects[projectid][category].append(new_data)
+                else:
+                    projects[projectid][category] = []
+                    projects[projectid][category].append(new_data)
+                with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+                    json.dump(projects, json_file, indent=2)
+                res = {
+                    "status": "ok",
+                    "message": "Data added!"
+                }
+                return jsonify(res)
+            except Exception:
+                with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+                    json.dump(projects_backup, json_file, indent=2)
+                res = {
+                    "status": "not-ok",
+                    "message": "Could not add data!"
+                }
+                return jsonify(res)
+        else:
+            res = {
+                "status": "not-ok",
+                "message": "Project not found!"
+            }
+            return jsonify(res)
+    else:
+        res = {
+            "status": "not-ok",
+            "message": "Unsupported HTTP method!"
+        }
+        return jsonify(res)
+
+@app.route("/api/delete/<projectid>/<category>/<dataid>", methods=["POST"])
+def delete_data_from_project(projectid, category, dataid):
+    with open(f"{APP_ROOT}/db/projects.json", "r") as json_file:
+        projects = json.load(json_file)
+        projects_backup = copy.deepcopy(projects)
+    for entry in projects[projectid][category]:
+        if entry["id"] == dataid:
+            projects[projectid][category].remove(entry)
+            break
+    try:
+        with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+            json.dump(projects, json_file, indent=2)
+        res = {
+            "status": "ok",
+            "message": "Data deleted!"
+        }
+        return jsonify(res)
+    except Exception:
+        with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+            json.dump(projects_backup, json_file, indent=2)
+        res = {
+            "status": "not-ok",
+            "message": "Could not delete data!"
+        }
+        return jsonify(res)
+
+@app.route("/api/project/<projectid>", methods=["POST"])
+def get_project_details(projectid):
+    if request.method == "POST":
+        with open(f"{APP_ROOT}/db/projects.json", "r") as json_file:
+            projects = json.load(json_file)
+        res = {
+            "status": "ok",
+            "project": projects[projectid]
+        }
+        return jsonify(res)
+    else:
+        res = {
+            "status": "not-ok",
+            "message": "Unsupported HTTP method!"
+        }
+        return jsonify(res)
+
+@app.route("/api/project/<projectid>/<category>", methods=["POST"])
+def get_category_details(projectid, category):
+    if request.method == "POST":
+        with open(f"{APP_ROOT}/db/projects.json", "r") as json_file:
+            projects = json.load(json_file)
+        res = {
+            "status": "ok",
+            category: projects[projectid][category]
+        }
+        return jsonify(res)
+    else:
+        res = {
+            "status": "not-ok",
+            "message": "Unsupported HTTP method!"
         }
         return jsonify(res)
 
