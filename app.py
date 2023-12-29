@@ -121,9 +121,7 @@ def create_project(userid):
             "projectname": projectname
         })
         projects.update({
-            projectid: {
-                "datas": []
-            }
+            projectid: {}
         })
         try:
             with open(f"{APP_ROOT}/db/projectnames.json", "w") as json_file:
@@ -159,9 +157,7 @@ def create_project(userid):
             }
         })
         projects.update({
-            projectid: {
-                "datas": []
-            }
+            projectid: {}
         })
         try:
             with open(f"{APP_ROOT}/db/projectnames.json", "w") as json_file:
