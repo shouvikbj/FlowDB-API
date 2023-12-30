@@ -2,11 +2,6 @@
   "0658e9dd-cc74-74c3-8000-2d0632aaef44": {
     "datas": [
       {
-        "id": "0658eeed-2794-7cec-8000-b2e5a9ec271a",
-        "name": "Shouvik Bajpayee",
-        "email": "shouvikbajpayee.private@gmail.com"
-      },
-      {
         "id": "0658eef5-4bf7-7b8d-8000-c11c8f5b5725",
         "name": "Team GangPayee",
         "email": "gangpayee@gmail.com",
@@ -41,10 +36,11 @@
   "0658f119-0747-7bbb-8000-313bf8cdce45": {
     "blogs": [
       {
-        "id": "0658f126-070f-7722-8000-b3d79c5de755",
+        "id": "06590291-757e-71a8-8000-1d34623c3e22",
         "name": "Shouvik Bajpayee",
         "blogname": "Visit to Bankura",
-        "description": "We went to Bnakura for some rituals. returned yesterday."
+        "description": "We went to Bankura for some rituals. returned yesterday.",
+        "localtion": "Gangajalghati, Bankura"
       }
     ]
   }

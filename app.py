@@ -236,6 +236,12 @@ def get_project(userid, projectid):
 def add_data_to_project(category, projectid):
     if request.method == "POST":
         formdata = request.form
+        if not formdata:
+            res = {
+                "status": "not-ok",
+                "message": "No form data found!"
+            }
+            return jsonify(res)
         new_data = {
             "id": uuid7str()
         }
@@ -332,6 +338,118 @@ def get_category_details(projectid, category):
             category: projects[projectid][category]
         }
         return jsonify(res)
+    else:
+        res = {
+            "status": "not-ok",
+            "message": "Unsupported HTTP method!"
+        }
+        return jsonify(res)
+
+@app.route("/api/project/<projectid>/<category>/<dataid>", methods=["POST", "PUT", "DELETE"])
+def data_record(projectid, category, dataid):
+    if request.method == "POST":
+        with open(f"{APP_ROOT}/db/projects.json", "r") as json_file:
+            projects = json.load(json_file)
+        if projectid in projects.keys() and category in projects[projectid].keys():
+            for data in projects[projectid][category]:
+                if data["id"] == dataid:
+                    res = {
+                        "status": "ok",
+                        "data": data
+                    }
+                    return jsonify(res)
+            else:
+                res = {
+                    "status": "not-ok",
+                    "message": "Data not found!"
+                }
+                return jsonify(res)
+        else:
+            res = {
+                "status": "not-ok",
+                "message": "Data not found!"
+            }
+            return jsonify(res)
+    elif request.method == "PUT":
+        formdata = request.form
+        if not formdata:
+            res = {
+                "status": "not-ok",
+                "message": "No form data found!"
+            }
+            return jsonify(res)
+        with open(f"{APP_ROOT}/db/projects.json", "r") as json_file:
+            projects = json.load(json_file)
+            projects_backup = copy.deepcopy(projects)
+        if projectid in projects.keys() and category in projects[projectid].keys():
+            for data in projects[projectid][category]:
+                if data["id"] == dataid:
+                    for key, value in formdata.to_dict().items():
+                        data[key] = value
+                    try:
+                        with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+                            json.dump(projects, json_file, indent=2)
+                        res = {
+                            "status": "ok",
+                            "message": "Data record updated!"
+                        }
+                        return jsonify(res)
+                    except Exception:
+                        with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+                            json.dump(projects_backup, json_file, indent=2)
+                        res = {
+                            "status": "not-ok",
+                            "message": "Could not update record!"
+                        }
+                        return jsonify(res)
+                else:
+                    res = {
+                        "status": "not-ok",
+                        "message": "Data not found!"
+                    }
+                    return jsonify(res)
+        else:
+            res = {
+                "status": "not-ok",
+                "message": "Data not found!"
+            }
+            return jsonify(res)
+    elif request.method == "DELETE":
+        with open(f"{APP_ROOT}/db/projects.json", "r") as json_file:
+            projects = json.load(json_file)
+            projects_backup = copy.deepcopy(projects)
+        if projectid in projects.keys() and category in projects[projectid].keys():
+            for data in projects[projectid][category]:
+                if data["id"] == dataid:
+                    projects[projectid][category].remove(data)
+                    try:
+                        with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+                            json.dump(projects, json_file, indent=2)
+                        res = {
+                            "status": "ok",
+                            "message": "Data record deleted!"
+                        }
+                        return jsonify(res)
+                    except Exception:
+                        with open(f"{APP_ROOT}/db/projects.json", "w") as json_file:
+                            json.dump(projects_backup, json_file, indent=2)
+                        res = {
+                            "status": "not-ok",
+                            "message": "Could not delete record!"
+                        }
+                        return jsonify(res)
+                else:
+                    res = {
+                        "status": "not-ok",
+                        "message": "Data not found!"
+                    }
+                    return jsonify(res)
+        else:
+            res = {
+                "status": "not-ok",
+                "message": "Data not found!"
+            }
+            return jsonify(res)
     else:
         res = {
             "status": "not-ok",
